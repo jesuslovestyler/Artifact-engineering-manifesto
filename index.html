@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="icon" href="data:," />
+  <title>Artifact Engineering Manifesto</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap');
+
+    :root {
+      --paper: #f3f0e9;
+      --ink: #171a18;
+      --muted: #60625d;
+      --rule: #c9c5ba;
+      --accent: #b43a2f;
+      --accent-soft: #e5d1c8;
+      --panel: #e8e4da;
+      --selection: #e2b4a8;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #171916;
+        --ink: #ece9e1;
+        --muted: #aaa99f;
+        --rule: #44463f;
+        --accent: #ef795f;
+        --accent-soft: #593228;
+        --panel: #23251f;
+        --selection: #744438;
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 19px;
+      line-height: 1.58;
+      text-rendering: optimizeLegibility;
+    }
+    ::selection { background: var(--selection); }
+    a { color: inherit; }
+    button { font: inherit; }
+
+    .progress {
+      position: fixed;
+      inset: 0 auto auto 0;
+      z-index: 10;
+      height: 3px;
+      width: 0;
+      background: var(--accent);
+    }
+
+    .page {
+      width: min(100%, 1180px);
+      margin: 0 auto;
+      padding: 28px 30px 70px;
+    }
+
+    .mast {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 13px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .edition { color: var(--muted); }
+    .mast a { text-decoration: none; }
+    .mast a:hover { color: var(--accent); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(260px, .65fr);
+      gap: 70px;
+      padding: 76px 0 68px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .issue {
+      margin: 0 0 18px;
+      color: var(--accent);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+    h1 {
+      max-width: 830px;
+      margin: 0;
+      font-size: clamp(3.2rem, 8.7vw, 7rem);
+      font-weight: 500;
+      line-height: .89;
+      letter-spacing: -.06em;
+    }
+    .dek {
+      align-self: end;
+      margin: 0;
+      font-size: 1.28rem;
+      line-height: 1.35;
+    }
+    .dek strong { color: var(--accent); font-weight: 600; }
+
+    .definition {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 42px;
+      padding: 50px 0 58px;
+      border-bottom: 1px solid var(--ink);
+    }
+    .label {
+      margin: 6px 0 0;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .definition p {
+      max-width: 880px;
+      margin: 0;
+      font-size: clamp(1.65rem, 3.3vw, 3rem);
+      line-height: 1.15;
+      letter-spacing: -.025em;
+    }
+    .definition .label {
+      margin-top: 6px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.4;
+      letter-spacing: .05em;
+    }
+    .definition em { color: var(--accent); font-style: normal; }
+
+    .body-grid {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 42px;
+      padding-top: 62px;
+    }
+    .contents {
+      position: sticky;
+      top: 28px;
+      align-self: start;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .contents p {
+      margin: 0 0 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .contents a {
+      display: block;
+      padding: 6px 0;
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .contents a:hover, .contents a.active { color: var(--accent); }
+
+    .article { max-width: 790px; }
+    section { scroll-margin-top: 35px; }
+    section + section { margin-top: 96px; }
+    h2 {
+      margin: 0 0 28px;
+      font-size: clamp(2rem, 4vw, 3.35rem);
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: -.04em;
+    }
+    .lead {
+      margin: 0;
+      font-size: 1.34rem;
+      line-height: 1.45;
+    }
+    .article p { max-width: 680px; }
+
+    .principles {
+      margin: 8px 0 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: principle;
+      border-top: 1px solid var(--ink);
+    }
+    .principles li {
+      counter-increment: principle;
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 18px;
+      padding: 26px 0 30px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .principles li::before {
+      content: "0" counter(principle);
+      padding-top: 5px;
+      color: var(--accent);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .principles h3 {
+      margin: 0 0 7px;
+      font-size: 1.45rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .principles p { margin: 0; color: var(--muted); }
+
+    .contrast {
+      margin-top: 38px;
+      background: var(--panel);
+      padding: 34px 36px 38px;
+    }
+    .contrast h3 {
+      margin: 0 0 22px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .contrast-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    .contrast-grid div + div { border-left: 1px solid var(--rule); padding-left: 32px; }
+    .contrast strong { display: block; margin-bottom: 5px; font-size: 1.15rem; }
+    .contrast p { margin: 0; color: var(--muted); font-size: 1rem; }
+
+    .method {
+      display: grid;
+      gap: 0;
+      margin-top: 10px;
+      border-top: 1px solid var(--ink);
+    }
+    .step {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 24px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .step code {
+      color: var(--accent);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .step h3 { margin: 0 0 4px; font-size: 1.3rem; font-weight: 600; }
+    .step p { margin: 0; color: var(--muted); }
+
+    .theses {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+    }
+    .thesis {
+      min-height: 210px;
+      padding: 28px;
+      background: var(--paper);
+    }
+    .thesis b {
+      display: block;
+      margin-bottom: 28px;
+      color: var(--accent);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+    }
+    .thesis p { margin: 0; font-size: 1.18rem; line-height: 1.35; }
+
+    .pledge {
+      margin-top: 104px;
+      border-top: 2px solid var(--accent);
+      border-bottom: 2px solid var(--accent);
+      padding: 42px 0 46px;
+    }
+    .pledge blockquote {
+      margin: 0;
+      font-size: clamp(1.7rem, 3.8vw, 3rem);
+      line-height: 1.15;
+      letter-spacing: -.025em;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+    .actions button {
+      min-height: 44px;
+      border: 1px solid var(--ink);
+      border-radius: 0;
+      background: transparent;
+      color: var(--ink);
+      padding: 10px 15px;
+      cursor: pointer;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+    .actions button:first-child { background: var(--ink); color: var(--paper); }
+    .actions button:hover { border-color: var(--accent); background: var(--accent); color: var(--paper); }
+    .actions button:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .status { min-height: 1.4em; margin: 12px 0 0; color: var(--accent); font-family: "IBM Plex Mono", monospace; font-size: 12px; }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+      padding: 32px 0 0;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    @media (max-width: 760px) {
+      .page { padding: 20px 19px 50px; }
+      .hero { grid-template-columns: 1fr; gap: 36px; padding: 56px 0 45px; }
+      h1 { font-size: clamp(3.35rem, 17.3vw, 5.2rem); }
+      .dek { max-width: 430px; }
+      .definition { grid-template-columns: 1fr; gap: 18px; padding: 37px 0 42px; }
+      .body-grid { grid-template-columns: 1fr; padding-top: 0; }
+      .contents {
+        position: relative;
+        top: auto;
+        display: flex;
+        gap: 7px 16px;
+        flex-wrap: wrap;
+        margin: 0 -19px 52px;
+        padding: 18px 19px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .contents p { width: 100%; margin-bottom: 3px; }
+      .contents a { padding: 3px 0; }
+      section + section { margin-top: 72px; }
+      .principles li { grid-template-columns: 38px 1fr; gap: 10px; }
+      .contrast { margin-left: -19px; margin-right: -19px; padding: 30px 19px 34px; }
+      .contrast-grid { grid-template-columns: 1fr; gap: 24px; }
+      .contrast-grid div + div { border-left: 0; border-top: 1px solid var(--rule); padding: 23px 0 0; }
+      .step { grid-template-columns: 80px 1fr; gap: 14px; }
+      .theses { grid-template-columns: 1fr; }
+      .thesis { min-height: 0; }
+      footer { flex-direction: column; gap: 6px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    @media print {
+      .progress, .contents, .actions, .status { display: none; }
+      .page { max-width: none; padding: 0; }
+      .body-grid, .definition, .hero { grid-template-columns: 1fr; }
+      body { font-size: 12pt; }
+      section + section { margin-top: 48px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+  <main class="page">
+    <header class="mast">
+      <span>Manifesto / 01</span>
+      <a href="#pledge">Read the pledge ↓</a>
+    </header>
+
+    <div class="hero">
+      <div>
+        <p class="issue">A discipline for the age of synthetic intelligence</p>
+        <h1>Build the thing that proves the words.</h1>
+      </div>
+      <p class="dek">Software is no longer written only in code. It begins as <strong>intent</strong>, becomes an artifact, and earns trust through evidence.</p>
+    </div>
+
+    <div class="definition" id="definition">
+      <p class="label">Definition</p>
+      <p><em>Artifact engineering</em> is the discipline of turning human intent into durable, inspectable software through collaboration with synthetic intelligence.</p>
+    </div>
+
+    <div class="body-grid">
+      <nav class="contents" aria-label="Manifesto sections">
+        <p>Contents</p>
+        <a href="#premise">01 — Premise</a>
+        <a href="#principles">02 — Principles</a>
+        <a href="#method">03 — Method</a>
+        <a href="#agenda">04 — Agenda</a>
+        <a href="#pledge">05 — Pledge</a>
+      </nav>
+
+      <article class="article">
+        <section id="premise">
+          <h2>From source code to shared intent</h2>
+          <p class="lead">The old abstraction was code over machine language. The next abstraction is intent over code.</p>
+          <p>That does not make engineering disappear. It moves engineering upward. The hard work becomes stating the real problem, carrying context without distortion, choosing constraints, testing behavior, and deciding what is worthy of release.</p>
+          <p>An artifact is not a chat response or a mockup. It is a working object: a page, tool, system, document, model, or interface that can be opened, examined, used, and improved. The conversation is scaffolding. The artifact is the proof.</p>
+          <div class="contrast" aria-label="Difference between prompting and artifact engineering">
+            <h3>Not prompting. Engineering.</h3>
+            <div class="contrast-grid">
+              <div>
+                <strong>Prompting asks for an output.</strong>
+                <p>It optimizes the next response.</p>
+              </div>
+              <div>
+                <strong>Artifact engineering owns an outcome.</strong>
+                <p>It manages intent, construction, verification, and revision as one system.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="principles">
+          <h2>Seven principles</h2>
+          <ol class="principles">
+            <li><div><h3>Intent is the first material.</h3><p>Before choosing tools, state what must become true for the person using the artifact. A vague request can begin the work; it cannot finish the specification.</p></div></li>
+            <li><div><h3>Context is part of the design.</h3><p>Constraints, history, audience, environment, and taste are not overhead. They determine whether the right thing gets built.</p></div></li>
+            <li><div><h3>The artifact outranks the conversation.</h3><p>Fluent explanation does not compensate for broken behavior. What opens, runs, reads, calculates, or communicates is what counts.</p></div></li>
+            <li><div><h3>Verification is a creative act.</h3><p>Testing reveals what the artifact actually is. Inspect the output, exercise the interactions, challenge assumptions, and revise from evidence.</p></div></li>
+            <li><div><h3>Human judgment remains accountable.</h3><p>Synthetic intelligence can generate options and execute at speed. People still own purpose, consequences, acceptance, and release.</p></div></li>
+            <li><div><h3>Legibility is a feature.</h3><p>A good artifact makes its operation and limits understandable. Hidden cleverness is worth less than visible reliability.</p></div></li>
+            <li><div><h3>Iteration compounds.</h3><p>Preserve what was learned. Each artifact should make the next one easier to specify, safer to build, and faster to verify.</p></div></li>
+          </ol>
+        </section>
+
+        <section id="method">
+          <h2>The working method</h2>
+          <p class="lead">Artifact engineering is a loop, not a single generation.</p>
+          <div class="method">
+            <div class="step"><code>Frame</code><div><h3>Name the change</h3><p>Define the user, the situation, and the outcome that matters.</p></div></div>
+            <div class="step"><code>Ground</code><div><h3>Gather reality</h3><p>Bring in the source material, constraints, interfaces, and facts the work depends on.</p></div></div>
+            <div class="step"><code>Shape</code><div><h3>Choose the form</h3><p>Decide what the artifact should be, what it should omit, and how someone will use it.</p></div></div>
+            <div class="step"><code>Build</code><div><h3>Make a complete object</h3><p>Produce the smallest finished artifact that can honestly satisfy the intent.</p></div></div>
+            <div class="step"><code>Prove</code><div><h3>Test the claim</h3><p>Inspect the rendered result, exercise its behavior, and compare it with the original outcome.</p></div></div>
+            <div class="step"><code>Carry</code><div><h3>Keep the learning</h3><p>Record the decisions and patterns that should survive into the next iteration.</p></div></div>
+          </div>
+        </section>
+
+        <section id="agenda">
+          <h2>A research agenda</h2>
+          <p class="lead">A discipline needs more than a name. It needs questions that can produce methods, evidence, and tools.</p>
+          <div class="theses">
+            <div class="thesis"><b>01 / INTENT</b><p>How can ambiguous human goals become precise without flattening what people mean?</p></div>
+            <div class="thesis"><b>02 / MEMORY</b><p>How should a system preserve context while keeping it current, bounded, and under human control?</p></div>
+            <div class="thesis"><b>03 / PROOF</b><p>What evidence makes a generated artifact trustworthy enough for its consequences?</p></div>
+            <div class="thesis"><b>04 / REPAIR</b><p>How can artifacts explain failure and support correction without requiring their makers to start over?</p></div>
+            <div class="thesis"><b>05 / AUTHORSHIP</b><p>How should credit and responsibility work when human judgment and synthetic production are inseparable?</p></div>
+            <div class="thesis"><b>06 / ACCESS</b><p>What becomes possible when the ability to make software is no longer limited by fluency in syntax?</p></div>
+          </div>
+        </section>
+
+        <section class="pledge" id="pledge">
+          <p class="label">The artifact engineer’s pledge</p>
+          <blockquote id="pledgeText">I will begin with human intent, build toward a real outcome, test what I make, reveal what I cannot prove, and take responsibility for what I release. I will use synthetic intelligence to enlarge human agency—not to disguise the absence of judgment. The artifact will be my evidence.</blockquote>
+          <div class="actions">
+            <button type="button" id="copyBtn">Copy the pledge</button>
+            <button type="button" id="downloadBtn">Download manifesto</button>
+          </div>
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+        </section>
+      </article>
+    </div>
+
+    <footer>
+      <span>First edition — October 2026</span>
+      <span>Build what can be examined.</span>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      var progress = document.getElementById('progress');
+      var links = Array.prototype.slice.call(document.querySelectorAll('.contents a'));
+      var sections = links.map(function (link) { return document.querySelector(link.getAttribute('href')); });
+      var status = document.getElementById('status');
+      var statusTimer;
+
+      function updateProgress() {
+        var scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        var ratio = scrollable > 0 ? window.scrollY / scrollable : 0;
+        progress.style.width = Math.min(100, Math.max(0, ratio * 100)) + '%';
+
+        var current = 0;
+        sections.forEach(function (section, index) {
+          if (section && section.getBoundingClientRect().top <= 150) current = index;
+        });
+        links.forEach(function (link, index) {
+          link.classList.toggle('active', index === current);
+        });
+      }
+
+      function announce(message) {
+        clearTimeout(statusTimer);
+        status.textContent = message;
+        statusTimer = setTimeout(function () { status.textContent = ''; }, 3200);
+      }
+
+      function fallbackCopy(text) {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); announce('Pledge copied.'); }
+        catch (e) { announce('Copy unavailable. Select the pledge above.'); }
+        document.body.removeChild(area);
+      }
+
+      document.getElementById('copyBtn').addEventListener('click', function () {
+        var text = document.getElementById('pledgeText').textContent.trim();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () { announce('Pledge copied.'); }, function () { fallbackCopy(text); });
+        } else fallbackCopy(text);
+      });
+
+      document.getElementById('downloadBtn').addEventListener('click', function () {
+        var title = 'ARTIFACT ENGINEERING MANIFESTO\nFirst edition — October 2026\n\n';
+        var body = 'DEFINITION\nArtifact engineering is the discipline of turning human intent into durable, inspectable software through collaboration with synthetic intelligence.\n\n';
+        body += 'SEVEN PRINCIPLES\n1. Intent is the first material.\n2. Context is part of the design.\n3. The artifact outranks the conversation.\n4. Verification is a creative act.\n5. Human judgment remains accountable.\n6. Legibility is a feature.\n7. Iteration compounds.\n\n';
+        body += 'THE METHOD\nFrame. Ground. Shape. Build. Prove. Carry.\n\n';
+        body += 'THE PLEDGE\n' + document.getElementById('pledgeText').textContent.trim() + '\n';
+        var blob = new Blob([title + body], { type: 'text/plain;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = 'artifact-engineering-manifesto.txt';
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+        announce('Manifesto downloaded.');
+      });
+
+      window.addEventListener('scroll', updateProgress, { passive: true });
+      window.addEventListener('resize', updateProgress);
+      updateProgress();
+    }());
+  </script>
+</body>
+</html>
